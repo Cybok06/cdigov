@@ -137,6 +137,29 @@ def create_app(test_config=None):
             raise click.ClickException(f'MongoDB connection failed: {type(exc).__name__}. Check MONGODB_URI, DNS, Atlas network access and credentials.') from None
         click.echo('MongoDB connected; CDIGOV indexes initialized.')
 
+    @app.cli.command('bootstrap-admin')
+    def bootstrap_admin():
+        """Create the first administrator from ADMIN_BOOTSTRAP_* environment values."""
+        username = app.config['ADMIN_BOOTSTRAP_USERNAME']
+        email = app.config['ADMIN_BOOTSTRAP_EMAIL']
+        password = app.config['ADMIN_BOOTSTRAP_PASSWORD']
+        if not (username and email and password):
+            click.echo('Administrator bootstrap skipped; ADMIN_BOOTSTRAP_* is not fully configured.')
+            return
+        if '@' not in email or not username or len(username) > 80:
+            raise click.ClickException('ADMIN_BOOTSTRAP_USERNAME and ADMIN_BOOTSTRAP_EMAIL are invalid.')
+        mongo.init_indexes()
+        if db.admin_users.find_one({'username': username}):
+            click.echo('Administrator already exists; bootstrap skipped.')
+            return
+        try:
+            db.admin_users.insert_one(dict(username=username, email=encrypt(email), role='owner',
+                password_hash=generate_password_hash(password), is_active=True, created_at=utcnow(), last_login=None))
+        except DuplicateKeyError:
+            click.echo('Administrator already exists; bootstrap skipped.')
+            return
+        click.echo('Initial administrator created.')
+
     @app.get('/health')
     def health():
         db.command('ping')

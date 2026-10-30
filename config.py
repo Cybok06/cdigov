@@ -72,8 +72,6 @@ def configuration(instance_path):
             raise RuntimeError('Configure the actual operator and contact email before launch.')
         if len(config['SECRET_KEY']) < 32 or len(config['SEARCH_KEY']) < 32:
             raise RuntimeError('Secrets must have at least 32 characters.')
-        if config['DEV_ADMIN_PASSWORD']:
-            raise RuntimeError('DEV_ADMIN_PASSWORD must not be configured in production.')
         if config['DEV_ADMIN_AUTH_DISABLED']:
             raise RuntimeError('DEV_ADMIN_AUTH_DISABLED must not be enabled in production.')
     if min(config[k] for k in ('DRAFT_RETENTION_DAYS', 'SUBMISSION_RETENTION_DAYS', 'ANALYTICS_RETENTION_DAYS')) < 1:

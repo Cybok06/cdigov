@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: starter
     buildCommand: pip install -r requirements.txt
-    preDeployCommand: python -m flask --app app init-db && python -m flask --app app bootstrap-admin
+    preDeployCommand: python -m flask --app app init-db
     startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 60 app:app
     healthCheckPath: /health
     envVars:
@@ -38,9 +38,3 @@ services:
         value: cdigov.onrender.com,cdigov.site,www.cdigov.site,localhost,127.0.0.1
       - key: TRUSTED_PROXY_HOPS
         value: "1"
-      - key: ADMIN_BOOTSTRAP_USERNAME
-        sync: false
-      - key: ADMIN_BOOTSTRAP_EMAIL
-        sync: false
-      - key: ADMIN_BOOTSTRAP_PASSWORD
-        sync: false

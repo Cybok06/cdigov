@@ -5,6 +5,7 @@ import warnings
 from pathlib import Path
 from bson.binary import Binary
 from PIL import Image, ImageOps, UnidentifiedImageError
+from cryptography.fernet import InvalidToken
 from flask import current_app, abort
 from db import db
 from models import cipher
@@ -42,4 +43,7 @@ def read_image(key):
     document = db.registrations.find_one({'photo.key': key, **retained_condition()}, {'photo.data': 1})
     if not document:
         abort(404)
-    return cipher().decrypt(bytes(document['photo']['data']))
+    try:
+        return cipher().decrypt(bytes(document['photo']['data']))
+    except InvalidToken:
+        abort(404)

@@ -4,7 +4,7 @@ import hmac
 import re
 from datetime import datetime, timezone
 from types import SimpleNamespace
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, InvalidToken
 from flask import current_app
 from flask_login import UserMixin
 from db import db
@@ -29,7 +29,16 @@ def encrypt(value):
 
 
 def decrypt(value):
-    return cipher().decrypt(value.encode()).decode() if value is not None else None
+    if value is None:
+        return None
+    try:
+        return cipher().decrypt(value.encode()).decode()
+    except (InvalidToken, ValueError, UnicodeDecodeError):
+        # Keep administrative views available when a legacy record was encrypted
+        # with a key that is no longer configured. The original value cannot be
+        # recovered without that key, so expose it as unavailable rather than
+        # allowing one malformed record to turn the whole dashboard into a 500.
+        return None
 
 
 def name_tokens(value):

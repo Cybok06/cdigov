@@ -35,7 +35,7 @@ services:
       - key: REGISTRATION_PURPOSE
         sync: false
       - key: TRUSTED_HOSTS
-        sync: false
+        value: cdigov.onrender.com,localhost,127.0.0.1
       - key: TRUSTED_PROXY_HOPS
         value: "1"
       - key: DEV_ADMIN_PASSWORD

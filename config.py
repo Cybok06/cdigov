@@ -49,7 +49,9 @@ def configuration(instance_path):
         OPERATOR_NAME=os.getenv('OPERATOR_NAME', 'Independent registration operator (configure before launch)'),
         CONTACT_EMAIL=os.getenv('CONTACT_EMAIL', 'support@cdi.gov'),
         REGISTRATION_PURPOSE=os.getenv('REGISTRATION_PURPOSE', "Registration for the operator's community programme"),
-        TRUSTED_HOSTS=os.getenv('TRUSTED_HOSTS', 'localhost,127.0.0.1').split(','),
+        TRUSTED_HOSTS=[host.strip() for host in os.getenv(
+            'TRUSTED_HOSTS', 'localhost,127.0.0.1'
+        ).split(',') if host.strip()],
         TRUSTED_PROXY_HOPS=int(os.getenv('TRUSTED_PROXY_HOPS', '0')),
         DEV_ADMIN_USERNAME=os.getenv('DEV_ADMIN_USERNAME', 'admin'),
         DEV_ADMIN_PASSWORD=os.getenv('DEV_ADMIN_PASSWORD', ''),

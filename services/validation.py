@@ -11,9 +11,14 @@ def validate_fields(data, final=False):
         if not isinstance(value, str):
             raise ValueError(f'{key.replace("_", " ").title()} must be text.')
         value = value.strip()
+        # Residential addresses are multiline textareas. Normalize browser
+        # line endings while still rejecting other control characters.
+        if key == 'residential_address':
+            value = value.replace('\\r\\n', '\\n').replace('\\r', '\\n')
         if len(value) > (1000 if key == 'residential_address' else 150):
             raise ValueError(f'{key.replace("_", " ").title()} is too long.')
-        if any(ord(char) < 32 for char in value):
+        allowed_controls = {'\\n'} if key == 'residential_address' else set()
+        if any(ord(char) < 32 and char not in allowed_controls for char in value):
             raise ValueError('Fields must not contain control characters.')
         if key == 'date_of_birth' and value:
             try:

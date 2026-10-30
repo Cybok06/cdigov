@@ -1,22 +1,18 @@
 'use strict';
 (() => {
-  const app = window.CDIGOV, consent = document.getElementById('location-consent');
+  const app = window.CDIGOV;
   const share = document.getElementById('share-location'), confirm = document.getElementById('confirm-location');
   const message = document.getElementById('location-status'), preview = document.getElementById('location-preview');
   let position, map, marker, circle;
   if (app.locationSaved()) message.textContent = 'Your location has been securely saved to your registration draft.';
-  consent.addEventListener('change', () => { if (!consent.checked) {position = null; preview.hidden = true;} });
   share.addEventListener('click',async () => {
-    if (!consent.checked) { message.textContent = 'Tick the immediate-storage consent box before requesting your location.'; consent.focus(); return; }
     if (!navigator.geolocation) {message.textContent = 'Your browser does not support location sharing. You can continue without it.';return;}
     if (!window.isSecureContext) {message.textContent = 'Location sharing requires HTTPS or localhost. You can continue without sharing.';return;}
     share.disabled = true; position = null; preview.hidden = true; message.textContent = 'Preparing your draft…';
     try { await app.ensureDraft(); } catch (exc) {message.textContent = exc.message;share.disabled=false;return;}
-    if (!consent.checked) {share.disabled=false;return;}
     message.textContent = 'Waiting for your browser’s location permission…';
     navigator.geolocation.getCurrentPosition(result => {
       share.disabled=false;
-      if (!consent.checked) {message.textContent='Location was not saved because consent was withdrawn.';return;}
       position = {latitude:result.coords.latitude,longitude:result.coords.longitude,accuracy_meters:result.coords.accuracy,captured_at:new Date(result.timestamp).toISOString()};
       preview.hidden = false; confirm.disabled=false; confirm.textContent='Confirm marker & save location';
       document.getElementById('location-coordinates').textContent = `Latitude ${position.latitude.toFixed(6)} · Longitude ${position.longitude.toFixed(6)} · Reported accuracy ±${Math.round(position.accuracy_meters)} m`;
@@ -37,7 +33,7 @@
     },{enableHighAccuracy:true,timeout:20000,maximumAge:0});
   });
   confirm.addEventListener('click',async () => {
-    if (!position || !consent.checked) {message.textContent='Consent and a captured location are required before saving.';return;}
+    if (!position) {message.textContent='A captured location is required before saving.';return;}
     confirm.disabled=true; share.disabled=true; message.textContent='Securely saving your location…';
     try {
       const result = await app.api('/api/registration/location',{...position,draft_token:app.token(),consent:true,confirmed:true});

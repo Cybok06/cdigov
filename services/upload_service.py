@@ -2,7 +2,6 @@
 import io
 import secrets
 import warnings
-from pathlib import Path
 from bson.binary import Binary
 from PIL import Image, ImageOps, UnidentifiedImageError
 from cryptography.fernet import InvalidToken
@@ -16,8 +15,6 @@ def prepare_image(upload):
     raw = upload.read(current_app.config['MAX_IMAGE_BYTES'] + 1)
     if len(raw) > current_app.config['MAX_IMAGE_BYTES']:
         raise ValueError('Choose a photograph smaller than 5 MB.')
-    if Path(upload.filename or '').suffix.lower() not in {'.jpg', '.jpeg', '.png', '.webp'}:
-        raise ValueError('Choose a JPG, PNG or WebP photograph.')
     try:
         with warnings.catch_warnings():
             warnings.simplefilter('error', Image.DecompressionBombWarning)

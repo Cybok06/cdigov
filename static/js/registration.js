@@ -117,16 +117,18 @@
   });
   document.getElementById('profile-photo').addEventListener('change',async event => {
     const file = event.target.files[0]; if (!file) return;
-    if (file.size > 5*1024*1024 || !['image/jpeg','image/png','image/webp'].includes(file.type)) { showError('Choose a JPG, PNG or WebP photograph smaller than 5 MB.'); event.target.value = ''; return; }
+    const message = document.getElementById('photo-status');
+    const resetPhoto = () => { event.target.value = ''; document.getElementById('photo-preview').innerHTML = '<i class="bi bi-person"></i>'; photoSaved = false; message.textContent = 'No photograph saved. You can continue without one.'; };
+    if (file.size > 5*1024*1024) { showError('Choose a photograph smaller than 5 MB. You can continue without a photograph.'); if (window.confirm('This photograph is too large. Continue without a photograph?')) resetPhoto(); return; }
     const img = document.createElement('img'); const objectUrl = URL.createObjectURL(file); img.src = objectUrl; img.alt = 'Preview of your selected photograph'; img.onload = () => URL.revokeObjectURL(objectUrl);
     document.getElementById('photo-preview').replaceChildren(img);
-    const message = document.getElementById('photo-status'); message.textContent = 'Uploading photograph…';
+    message.textContent = 'Uploading and converting photograph...';
     try {
       await save(true);
       const data = new FormData(); data.append('photo',file); data.append('draft_token',draftToken);
       await api('/api/registration/photo',data,true);
       img.alt = 'Your uploaded profile photograph'; photoSaved = true; message.textContent = 'Photograph securely saved.';
-    } catch (exc) { message.textContent = 'Upload failed. Please choose your photograph again.'; showError(exc.message); }
+    } catch (exc) { message.textContent = 'Photograph upload failed.'; showError(`${exc.message} You can continue without a photograph.`); if (window.confirm('The photograph could not be uploaded or converted. Continue without a photograph?')) resetPhoto(); }
   });
   window.addEventListener('beforeunload', event => {if (dirty) {event.preventDefault();event.returnValue='';}});
   window.CDIGOV = {api, ensureDraft:() => save(true), token:() => draftToken, showError, markLocationSaved:() => {locationSaved = true;}, locationSaved:() => locationSaved};

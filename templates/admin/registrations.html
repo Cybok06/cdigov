@@ -1,0 +1,3 @@
+{% extends 'admin/base.html' %}
+{% block title %}Registrations · CDIGOV{% endblock %}{% block breadcrumb %}Registrations{% endblock %}
+{% block admin_content %}<div class="admin-page-heading"><div><div class="eyebrow">REGISTRATION MANAGEMENT</div><h1>Every registration, in view.</h1><p>Search by a complete name word or reference prefix. Drafts remain incomplete until submitted.</p></div></div><section class="admin-panel">{% include 'admin/_filters.html' %}{% set records=pagination.items %}{% include 'admin/_table.html' %}{% include 'admin/_pagination.html' %}</section>{% endblock %}

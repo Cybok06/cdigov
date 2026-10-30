@@ -1,0 +1,11 @@
+Flask>=3.1,<4
+pymongo>=4.12,<5
+Flask-Login>=0.6.3,<0.7
+Flask-WTF>=1.2,<2
+Flask-Limiter[redis]>=3.12,<4
+python-dotenv>=1,<2
+cryptography>=45,<47
+Pillow>=11.2,<13
+gunicorn>=23,<24; sys_platform != 'win32'
+pytest>=8.3,<10
+mongomock>=4.3,<5

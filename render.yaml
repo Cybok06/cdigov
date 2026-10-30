@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: cdigov
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    preDeployCommand: python -m flask --app app init-db
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 60 app:app
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ENCRYPTION_KEY
+        sync: false
+      - key: SEARCH_KEY
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: cdigov
+      - key: MONGO_SERVER_SELECTION_TIMEOUT_MS
+        value: "10000"
+      - key: MONGO_MAX_POOL_SIZE
+        value: "30"
+      - key: MONGO_URI
+        sync: false
+      - key: RATELIMIT_STORAGE_URI
+        sync: false
+      - key: OPERATOR_NAME
+        sync: false
+      - key: CONTACT_EMAIL
+        sync: false
+      - key: REGISTRATION_PURPOSE
+        sync: false
+      - key: TRUSTED_HOSTS
+        sync: false
+      - key: TRUSTED_PROXY_HOPS
+        value: "1"
+      - key: DEV_ADMIN_PASSWORD
+        sync: false

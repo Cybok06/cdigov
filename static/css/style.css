@@ -5,6 +5,7 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 .identity-banner{display:flex;gap:36px;flex-wrap:wrap;background:#e8f5ed;border:1px solid #b9dfc8;border-left:4px solid #2f8f5b;border-radius:8px;padding:13px 16px;margin-bottom:22px}.identity-banner div{display:flex;gap:8px;align-items:baseline}.identity-banner span{font-size:10px;color:#397052}.identity-banner strong{font-size:13px;color:#145c38;letter-spacing:.02em}
 .location-required-dialog{border:0;border-radius:12px;padding:28px;max-width:390px;color:var(--ink);box-shadow:0 20px 70px #102a4350}.location-required-dialog::backdrop{background:#102a4370}.location-required-dialog h3{font-size:20px;margin:10px 0}.location-required-dialog p{font-size:12px;color:var(--muted)}.dialog-icon{color:var(--blue);font-size:28px}
+#confirm-location{display:none!important}
 
 .login-page{max-width:490px;padding-top:65px;padding-bottom:75px}.login-card{padding:35px;background:white;border:1px solid var(--line);border-radius:13px}.login-card h1{font-size:33px;margin:13px 0}.login-card>p{font-size:12px;color:var(--muted);margin-bottom:27px}
 

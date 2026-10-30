@@ -15,11 +15,11 @@ def validate_fields(data, final=False):
         # line endings while still rejecting other control characters.
         if key == 'residential_address':
             value = value.replace('\\r\\n', '\\n').replace('\\r', '\\n')
+            value = ''.join(char if ord(char) >= 32 or char == '\\n' else ' ' for char in value)
+        else:
+            value = ''.join(char if ord(char) >= 32 else ' ' for char in value)
         if len(value) > (1000 if key == 'residential_address' else 150):
             raise ValueError(f'{key.replace("_", " ").title()} is too long.')
-        allowed_controls = {'\\n'} if key == 'residential_address' else set()
-        if any(ord(char) < 32 and char not in allowed_controls for char in value):
-            raise ValueError('Fields must not contain control characters.')
         if key == 'date_of_birth' and value:
             try:
                 parsed = date.fromisoformat(value)

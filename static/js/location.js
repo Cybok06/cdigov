@@ -22,6 +22,8 @@
       document.getElementById('location-coordinates').textContent = `Latitude ${position.latitude.toFixed(6)} · Longitude ${position.longitude.toFixed(6)} · Reported accuracy ±${Math.round(position.accuracy_meters)} m`;
       document.getElementById('location-accuracy').textContent = position.accuracy_meters > 100 ? 'Low reported accuracy. This location may be over 100 metres from your position. Retry voluntarily, continue without it, or confirm this estimate.' : 'This is your browser’s reported estimate, not a guaranteed exact location. Confirm the marker to save it.';
       message.textContent = 'Location captured. Review the marker below. These coordinates have not yet been saved.';
+      // Saving does not depend on the map provider being available.
+      confirm.click();
       if (!window.L) {message.textContent += ' The map could not load. Retry when map access is available.';confirm.disabled=true;return;}
       if (!map) { map = L.map('location-map'); L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',maxZoom:19}).addTo(map); }
       const point = [position.latitude,position.longitude];
